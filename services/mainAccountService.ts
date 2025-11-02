@@ -1,28 +1,38 @@
 import { db } from "@/libs/db";
 
 export const mainAccountService = {
-    createMainAccount: async (account: string) => {
+    async createMainAccount(account: string) {
         try {
-            const mainAccount = await (db as any).mainAccounts.add({
+            await (db as any).mainAccounts.add({
                 account,
             });
-            return mainAccount;
+            return true;
         } catch (err) {
             throw err;
         }
     },
-    deleteMainAccount: async (id: number) => {
+    async deleteMainAccount(id: number) {
         try {
             await (db as any).mainAccounts.delete(id);
+            return true;
         } catch (err) {
             throw err;
         }
     },
-    updateMainAccount: async (id: number, account: string) => {
+    async updateMainAccount(id: number, account: string) {
         try {
             await (db as any).mainAccounts.update(id, { account });
+            return true;
         } catch (err) {
             throw err;
         }
-    }
+    },
+    async getAllMainAccounts() {
+        try {
+            const mainAccountsList = await (db as any).mainAccounts.toArray();
+            return mainAccountsList;
+        } catch (err) {
+            throw err;
+        }
+    },
 };
