@@ -10,4 +10,5 @@ export interface ICharacter {
     jobRank: EJobRank;
     items: ITag[];
     note: string;
+    cardTime: number;
 }

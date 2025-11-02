@@ -1,5 +1,5 @@
 
 export interface ITag {
-    name: string;
-    number: number;
+    label: string;
+    amount: number;
 }
