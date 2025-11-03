@@ -12,4 +12,12 @@ export const subAccountService = {
             throw err;
         }
     },
+    async getSubAccountsByMainId(mainId: number) {
+        try {
+            const subAccountsList = await (db as any).subAccounts.where('mainId').equals(mainId).toArray();
+            return subAccountsList;
+        } catch (err) {
+            throw err;
+        }
+    },
 };

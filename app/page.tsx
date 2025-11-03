@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { SubAccountCard } from "@/components/SubAccountCard";
 import { MainAccountCard } from "@/components/MainAccountCard";
-import { mainAccountService } from "@/services/mainAccountService";
 import { subAccountService } from "@/services/subAccountService";
 import { Modal } from "@/components/Modal";
 
@@ -19,12 +18,12 @@ type SubAccount = {
   note: string;
 }
 
-const createSubAccount = async (mainId: number, name: string, note: string) => {
+const createSubAccount = async (mainId: number, name: string, note: string): Promise<SubAccount | null> => {
   try {
     const newSubAccount = await subAccountService.createSubAccount(mainId, name, note);
     return newSubAccount;
   } catch (err) {
-    console.error("创建子账号失败:", err);
+    console.error(err);
     return null;
   }
 }
@@ -36,21 +35,17 @@ export default function Home() {
   const [createSubAccountModalFlag, setCreateSubAccountModalFlag] = useState(false);
   const [newSubAccount, setNewSubAccount] = useState({ name: "", note: "" });
 
+  // Fetch sub-accounts whenever the current main account changes
   useEffect(() => {
-    if (currentMainAccount) {
-      mainAccountService.getSubAccountsByMainId(currentMainAccount.id).then((res) => {
+    currentMainAccount ?
+      subAccountService.getSubAccountsByMainId(currentMainAccount?.id).then((res) => {
         setSubAccounts(res);
-      });
-    } else {
-      setSubAccounts([]);
-    }
+      }) : setSubAccounts([]);
   }, [currentMainAccount]);
-
-
 
   return (
     <div className=" space-y-5">
-      <MainAccountCard setCurrentMainAccount={setCurrentMainAccount} />
+      <MainAccountCard currentMainAccount={currentMainAccount} setCurrentMainAccount={setCurrentMainAccount} />
       <div>
         {
           subAccounts.length > 0 && subAccounts.map((subAccount) => (
@@ -69,6 +64,7 @@ export default function Home() {
         )
       }
       {
+        // create subaccount modal
         createSubAccountModalFlag && (
           <Modal isShow={createSubAccountModalFlag} setModalShow={setCreateSubAccountModalFlag}>
             <p className=" text-gray-500">新建子账号</p>
@@ -81,17 +77,17 @@ export default function Home() {
                 if (!currentMainAccount) return;
                 createSubAccount(currentMainAccount.id, newSubAccount.name, newSubAccount.note).then((newSubAccount) => {
                   if (newSubAccount) {
-                    // 刷新子账号列表
-                    mainAccountService.getSubAccountsByMainId(currentMainAccount.id).then((res) => {
+                    // refresh subaccount list
+                    subAccountService.getSubAccountsByMainId(currentMainAccount.id).then((res) => {
                       setSubAccounts(res);
                       setCreateSubAccountModalFlag(false);
                       setNewSubAccount({ name: "", note: "" });
                     });
                   } else {
-                    alert("创建子账号失败");
+                    alert("创建失败");
                   }
                 });
-              }}>保存</button>
+              }}>创建</button>
             </div>
           </Modal>
         )
