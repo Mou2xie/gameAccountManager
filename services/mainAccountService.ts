@@ -3,10 +3,10 @@ import { db } from "@/libs/db";
 export const mainAccountService = {
     async createMainAccount(account: string) {
         try {
-            await (db as any).mainAccounts.add({
+            const newAccount = await (db as any).mainAccounts.add({
                 account,
             });
-            return true;
+            return newAccount;
         } catch (err) {
             throw err;
         }
@@ -31,6 +31,14 @@ export const mainAccountService = {
         try {
             const mainAccountsList = await (db as any).mainAccounts.toArray();
             return mainAccountsList;
+        } catch (err) {
+            throw err;
+        }
+    },
+    async getSubAccountsByMainId(mainId: number) {
+        try {
+            const subAccountsList = await (db as any).subAccounts.where('mainId').equals(mainId).toArray();
+            return subAccountsList;
         } catch (err) {
             throw err;
         }

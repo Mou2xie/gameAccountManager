@@ -27,8 +27,8 @@ export const MainAccountCard = ({ setCurrentMainAccount }: { setCurrentMainAccou
     }, []);
 
     const handleCreateMainAccount = () => {
-        mainAccountService.createMainAccount(newMainAccount).then((res) => {
-            res && mainAccountService.getAllMainAccounts().then((accounts) => {
+        mainAccountService.createMainAccount(newMainAccount).then((newAccount) => {
+            newAccount && mainAccountService.getAllMainAccounts().then((accounts) => {
                 setMainAccountsList(accounts);
                 setCreateMainAccountModalFlag(false);
                 setNewMainAccount("");
@@ -53,7 +53,13 @@ export const MainAccountCard = ({ setCurrentMainAccount }: { setCurrentMainAccou
         mainAccountService.deleteMainAccount(mainAccountDisplay.id).then((res) => {
             res && mainAccountService.getAllMainAccounts().then((accounts) => {
                 setMainAccountsList(accounts);
+                setCurrentMainAccount(null);
                 setMainAccountDisplay(null);
+                // 重置 select 的值
+                const selectElement = document.querySelector('.account-select') as HTMLSelectElement;
+                if (selectElement) {
+                    selectElement.value = '选择主账号';
+                }
                 alert("删除成功");
             });
         });
@@ -63,12 +69,13 @@ export const MainAccountCard = ({ setCurrentMainAccount }: { setCurrentMainAccou
         <div className=" flex justify-between items-center h-20 bg-gray-100 rounded-xl px-10">
             <div className=" flex items-center gap-3">
                 <p className=" text-gray-500">当前账号:</p>
-                <select defaultValue={mainAccountsList.length === 0 ? '无可用主账号' : '选择主账号'} className="select w-50 focus:outline-none" onChange={(e) => {
+                <select value={mainAccountDisplay?.id || ''} className="select w-50 focus:outline-none account-select" onChange={(e) => {
                     const selectedId = Number(e.target.value);
-                    setCurrentMainAccount(mainAccountsList.find(account => account.id === selectedId) || null);
-                    setMainAccountDisplay(mainAccountsList.find(account => account.id === selectedId) || null);
+                    const selectedAccount = mainAccountsList.find(account => account.id === selectedId) || null;
+                    setCurrentMainAccount(selectedAccount);
+                    setMainAccountDisplay(selectedAccount);
                 }}>
-                    <option disabled={true}>{mainAccountsList.length === 0 ? '无可用主账号' : '选择主账号'}</option>
+                    <option value="" disabled>{mainAccountsList.length === 0 ? '无可用主账号' : '选择主账号'}</option>
                     {
                         mainAccountsList.map(({ id, account }) => <option key={id} value={id}>{account}</option>)
                     }
