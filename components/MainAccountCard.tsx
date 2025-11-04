@@ -1,53 +1,46 @@
-import React from 'react';
 import { useEffect, useState } from 'react';
-import { SquarePen, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Modal } from "@/components/Modal";
 import { mainAccountService } from '@/services/mainAccountService';
+import type { IMainAccount } from '@/libs/db';
 
-type MainAccount = {
-    id: number;
-    account: string;
-}
+type MainAccountWithId = IMainAccount & { id: number };
 
 type MainAccountCardProps = {
-    currentMainAccount: MainAccount | null;
-    setCurrentMainAccount: React.Dispatch<React.SetStateAction<MainAccount | null>>;
-}
+    currentMainAccount: MainAccountWithId | null;
+    onSelectMainAccount: (account: MainAccountWithId | null) => void;
+};
 
-export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: MainAccountCardProps) => {
+export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: MainAccountCardProps) => {
 
-    const [mainAccountsList, setMainAccountsList] = useState<Array<MainAccount>>([]);
+    const [mainAccountsList, setMainAccountsList] = useState<MainAccountWithId[]>([]);
     const [newMainAccount, setNewMainAccount] = useState("");
     const [createMainAccountModalFlag, setCreateMainAccountModalFlag] = useState(false);  // create new account modal state
-    const [editMainAccountFlag, setEditMainAccountFlag] = useState<boolean>(false);  // edit account state
 
     useEffect(() => {
         // fetch all main accounts
         const fetchMainAccounts = async () => {
             const mainAccounts = await mainAccountService.getAllMainAccounts();
-            setMainAccountsList(mainAccounts);
+            setMainAccountsList(
+                mainAccounts.filter(
+                    (account): account is MainAccountWithId => account.id !== undefined,
+                ),
+            );
         }
         fetchMainAccounts();
     }, []);
 
     const handleCreateMainAccount = () => {
-        mainAccountService.createMainAccount(newMainAccount).then((newAccount) => {
-            newAccount && mainAccountService.getAllMainAccounts().then((accounts) => {
-                setMainAccountsList(accounts);
+        mainAccountService.createMainAccount(newMainAccount).then((newAccountId) => {
+            newAccountId && mainAccountService.getAllMainAccounts().then((accounts) => {
+                setMainAccountsList(
+                    accounts.filter(
+                        (account): account is MainAccountWithId => account.id !== undefined,
+                    ),
+                );
                 setCreateMainAccountModalFlag(false);
                 setNewMainAccount("");
                 alert("主账号创建成功");
-            });
-        });
-    }
-
-    const handleEditMainAccount = () => {
-        if (!currentMainAccount) return;
-        mainAccountService.updateMainAccount(currentMainAccount.id, currentMainAccount.account).then((res) => {
-            res && mainAccountService.getAllMainAccounts().then((accounts) => {
-                setMainAccountsList(accounts);
-                setEditMainAccountFlag(false);
-                alert("修改成功");
             });
         });
     }
@@ -60,8 +53,12 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
         }
         mainAccountService.deleteMainAccount(currentMainAccount.id).then((res) => {
             res && mainAccountService.getAllMainAccounts().then((accounts) => {
-                setMainAccountsList(accounts);
-                setCurrentMainAccount(null);
+                setMainAccountsList(
+                    accounts.filter(
+                        (account): account is MainAccountWithId => account.id !== undefined,
+                    ),
+                );
+                onSelectMainAccount(null);
             });
             alert("删除成功");
         });
@@ -78,7 +75,7 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
                         onChange={(e) => {
                             const selectedId = Number(e.target.value);
                             const selectedAccount = mainAccountsList.find(account => account.id === selectedId) || null;
-                            setCurrentMainAccount(selectedAccount);
+                            onSelectMainAccount(selectedAccount);
                         }}>
                         <option value="">选择主账号</option>
                         {
@@ -94,13 +91,6 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
                 {
                     currentMainAccount && (
                         <>
-                            <button
-                                className=" icon-button"
-                                onClick={() => setEditMainAccountFlag(true)}
-                                title="重命名主账号"
-                            >
-                                <SquarePen className=" w-4 h-4" />
-                            </button>
                             <button
                                 className=" icon-button"
                                 onClick={handleDeleteMainAccount}
@@ -134,19 +124,6 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
                 </div>
             </Modal>
 
-            {/* edit main account modal */}
-            <Modal isShow={editMainAccountFlag} setModalShow={setEditMainAccountFlag}>
-                <p className=" text-gray-500">重命名当前账号</p>
-                <div className=" flex flex-col gap-3 mt-5">
-                    <input
-                        type="text"
-                        className=" app-input"
-                        value={currentMainAccount?.account || ""}
-                        onChange={(e) => setCurrentMainAccount({ ...currentMainAccount!, account: e.target.value })}
-                    />
-                    <button className=" app-btn-primary w-full" onClick={handleEditMainAccount}>保存</button>
-                </div>
-            </Modal>
         </div>
     );
 }

@@ -28,7 +28,7 @@ export enum EAllClass {
     Armorsmith = "铠甲工",
     HatMaker = "帽子工",
     HelmetSmith = "头盔工",
-    WeaponCrafter = "投资武器工",
+    WeaponCrafter = "投掷武器工",
     KnifeCrafter = "小刀工",
     Alchemist = "药剂师",
     ShieldSmith = "造盾工",

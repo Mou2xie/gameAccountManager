@@ -15,6 +15,7 @@ import { subAccountService } from "@/services/subAccountService";
 
 const MAX_CHARACTERS_PER_SUB_ACCOUNT = 2;
 const CHARACTER_INDEX_SLOTS = [0, 2];
+const DEFAULT_CARD_TIME = "0";
 
 const fetchCharacters = async (subAccountId: number): Promise<ICharacter[]> => {
     try {
@@ -38,6 +39,7 @@ type CreateCharacterForm = {
     classCategory: EClassCategory;
     className: EAllClass;
     level: string;
+    jobRank: string;
     note: string;
 };
 
@@ -49,6 +51,7 @@ const INITIAL_FORM: CreateCharacterForm = {
     classCategory: EClassCategory.Combat,
     className: getDefaultClassForCategory(EClassCategory.Combat),
     level: "1",
+    jobRank: "",
     note: "",
 };
 
@@ -168,8 +171,12 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
         }
 
         const parsedLevel = Number(newCharacter.level);
-        if (Number.isNaN(parsedLevel) || parsedLevel < 0) {
-            alert("请输入正确的等级");
+        if (
+            Number.isNaN(parsedLevel) ||
+            parsedLevel < 1 ||
+            parsedLevel > 120
+        ) {
+            alert("请输入 1 到 120 之间的等级");
             return;
         }
 
@@ -180,6 +187,8 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                 name: trimmedName,
                 class: newCharacter.className,
                 level: parsedLevel,
+                jobRank: newCharacter.jobRank.trim(),
+                cardTime: DEFAULT_CARD_TIME,
                 note: newCharacter.note.trim() || undefined,
                 index: targetIndex,
             });
@@ -365,7 +374,8 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                         等级
                         <input
                             type="number"
-                            min={0}
+                            min={1}
+                            max={120}
                             className=" app-input"
                             value={newCharacter.level}
                             onChange={(event) =>

@@ -1,16 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { SubAccountCard } from "@/components/SubAccountCard";
 import { MainAccountCard } from "@/components/MainAccountCard";
 import { subAccountService } from "@/services/subAccountService";
 import { Modal } from "@/components/Modal";
-import type { ISubAccount } from "@/libs/db";
+import type { ISubAccount, IMainAccount } from "@/libs/db";
 
-type MainAccount = {
-  id: number;
-  account: string;
-}
+type MainAccountWithId = IMainAccount & { id: number };
 
 const createSubAccount = async (mainId: number, name: string, note: string): Promise<number | null> => {
   try {
@@ -24,28 +21,38 @@ const createSubAccount = async (mainId: number, name: string, note: string): Pro
 
 export default function Home() {
 
-  const [currentMainAccount, setCurrentMainAccount] = useState<MainAccount | null>(null);
+  const [currentMainAccount, setCurrentMainAccount] = useState<MainAccountWithId | null>(null);
   const [subAccounts, setSubAccounts] = useState<Array<ISubAccount>>([]);
   const [createSubAccountModalFlag, setCreateSubAccountModalFlag] = useState(false);
   const [newSubAccount, setNewSubAccount] = useState({ name: "", note: "" });
 
-  const refreshSubAccounts = useCallback(async () => {
-    if (!currentMainAccount?.id) {
+  const loadSubAccounts = useCallback(async (mainAccountId: number) => {
+    const list = await subAccountService.getSubAccountsByMainId(mainAccountId);
+    setSubAccounts(list);
+  }, []);
+
+  const handleMainAccountChange = useCallback((account: MainAccountWithId | null) => {
+    setCurrentMainAccount(account);
+    if (!account?.id) {
       setSubAccounts([]);
       return;
     }
-    const list = await subAccountService.getSubAccountsByMainId(currentMainAccount.id);
-    setSubAccounts(list);
-  }, [currentMainAccount]);
+    void loadSubAccounts(account.id);
+  }, [loadSubAccounts]);
 
-  // Fetch sub-accounts whenever the current main account changes
-  useEffect(() => {
-    refreshSubAccounts();
-  }, [refreshSubAccounts]);
+  const currentMainAccountId = currentMainAccount?.id ?? null;
+
+  const refreshSubAccounts = useCallback(async () => {
+    if (!currentMainAccountId) {
+      setSubAccounts([]);
+      return;
+    }
+    await loadSubAccounts(currentMainAccountId);
+  }, [currentMainAccountId, loadSubAccounts]);
 
   return (
     <div className=" space-y-6">
-      <MainAccountCard currentMainAccount={currentMainAccount} setCurrentMainAccount={setCurrentMainAccount} />
+      <MainAccountCard currentMainAccount={currentMainAccount} onSelectMainAccount={handleMainAccountChange} />
       <div className=" space-y-6">
         {
           subAccounts.length > 0 && subAccounts.map((subAccount) => (

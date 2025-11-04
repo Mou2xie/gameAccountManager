@@ -3,7 +3,48 @@ import type { ICharacter, ITag } from "@/libs/db";
 import { Modal } from "./Modal";
 import { tagService } from "@/services/tagService";
 import { characterService } from "@/services/characterService";
-import { Plus, Minus, Trash2, X } from "lucide-react";
+import { Plus, Minus, Trash2, X, Pencil } from "lucide-react";
+import {
+    EAllClass,
+    EClassCategory,
+    ECombatClass,
+    ECraftingClass,
+    EStorageClass,
+} from "@/models/Class";
+
+const MIN_CARD_TIME = 0;
+const MAX_CARD_TIME = 6;
+const MIN_LEVEL = 1;
+const MAX_LEVEL = 120;
+
+const categoryToClasses: Record<EClassCategory, EAllClass[]> = {
+    [EClassCategory.Combat]: Object.values(ECombatClass) as unknown as EAllClass[],
+    [EClassCategory.Crafting]: Object.values(ECraftingClass) as unknown as EAllClass[],
+    [EClassCategory.Storage]: Object.values(EStorageClass) as unknown as EAllClass[],
+};
+
+const getDefaultClassForCategory = (category: EClassCategory): EAllClass =>
+    categoryToClasses[category][0];
+
+const getCategoryByClassName = (className?: string): EClassCategory => {
+    if (className) {
+        const match = Object.entries(categoryToClasses).find(([, classes]) =>
+            classes.includes(className as EAllClass),
+        );
+        if (match) {
+            return match[0] as EClassCategory;
+        }
+    }
+    return EClassCategory.Combat;
+};
+
+const getNormalizedClassName = (
+    category: EClassCategory,
+    className?: string,
+): EAllClass =>
+    categoryToClasses[category].includes(className as EAllClass)
+        ? (className as EAllClass)
+        : getDefaultClassForCategory(category);
 
 type CharacterCardProps = {
     character: ICharacter & { subAccountId: number };
@@ -22,6 +63,8 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
         cardTime,
     } = character;
 
+    const initialCategory = getCategoryByClassName(characterClass);
+
     const [assignedTags, setAssignedTags] = useState<CharacterTag[]>([]);
     const [availableTags, setAvailableTags] = useState<ITag[]>([]);
     const [isTagModalOpen, setIsTagModalOpen] = useState(false);
@@ -29,6 +72,15 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     const [newTagLabel, setNewTagLabel] = useState("");
     const [newTagAmount] = useState("");
     const [isSavingTag, setIsSavingTag] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editForm, setEditForm] = useState(() => ({
+        name: name ?? "",
+        classCategory: initialCategory,
+        className: getNormalizedClassName(initialCategory, characterClass),
+        level: String(level ?? MIN_LEVEL),
+        jobRank: jobRank ?? "",
+        note: character.note ?? "",
+    }));
 
     const displayCardTime = cardTime ? `${cardTime} 小时` : "未打卡";
 
@@ -44,6 +96,21 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     useEffect(() => {
         loadAssignedTags();
     }, [loadAssignedTags]);
+
+    useEffect(() => {
+        if (isEditModalOpen) {
+            return;
+        }
+        const category = getCategoryByClassName(characterClass);
+        setEditForm({
+            name: name ?? "",
+            classCategory: category,
+            className: getNormalizedClassName(category, characterClass),
+            level: String(level ?? MIN_LEVEL),
+            jobRank: jobRank ?? "",
+            note: character.note ?? "",
+        });
+    }, [character.note, characterClass, isEditModalOpen, jobRank, level, name]);
 
     const loadAvailableTags = useCallback(async () => {
         const tags = await tagService.getAllTags();
@@ -118,14 +185,90 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
         }
     };
 
+    const handleOpenEditModal = () => {
+        const category = getCategoryByClassName(characterClass);
+        setEditForm({
+            name: name ?? "",
+            classCategory: category,
+            className: getNormalizedClassName(category, characterClass),
+            level: String(level ?? MIN_LEVEL),
+            jobRank: jobRank ?? "",
+            note: character.note ?? "",
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleSubmitEdit = async () => {
+        if (!characterId) {
+            return;
+        }
+        const trimmedName = editForm.name.trim();
+        if (!trimmedName) {
+            alert("请输入角色名称");
+            return;
+        }
+        const parsedLevel = Number(editForm.level);
+        if (
+            Number.isNaN(parsedLevel) ||
+            parsedLevel < MIN_LEVEL ||
+            parsedLevel > MAX_LEVEL
+        ) {
+            alert(`请输入 ${MIN_LEVEL} 到 ${MAX_LEVEL} 之间的等级`);
+            return;
+        }
+        try {
+            await characterService.updateCharacter(characterId, {
+                name: trimmedName,
+                class: editForm.className,
+                level: parsedLevel,
+                jobRank: editForm.jobRank.trim() || undefined,
+                note: editForm.note.trim() || undefined,
+            });
+            setIsEditModalOpen(false);
+            await onCharacterMutate?.();
+        } catch (error) {
+            console.error(error);
+            alert("更新角色失败，请稍后重试");
+        }
+    };
+
+    const handleAdjustLevel = async (delta: number) => {
+        if (!characterId) {
+            return;
+        }
+        const numericLevel = Number(level ?? MIN_LEVEL);
+        const nextValue = Math.min(
+            MAX_LEVEL,
+            Math.max(MIN_LEVEL, numericLevel + delta),
+        );
+        if (Number.isNaN(numericLevel) || nextValue === numericLevel) {
+            return;
+        }
+        try {
+            await characterService.updateCharacter(characterId, {
+                level: nextValue,
+            });
+            await onCharacterMutate?.();
+        } catch (error) {
+            console.error(error);
+            alert("更新等级失败，请稍后重试");
+        }
+    };
+
     const badgeClassName = "border border-gray-400 text-gray-600 bg-white";
 
     const handleAdjustCardTime = async (delta: number) => {
         if (!characterId) {
             return;
         }
-        const numericTime = Number(cardTime ?? 0);
-        const nextValue = Math.max(0, numericTime + delta);
+        const numericTime = Number(cardTime ?? MIN_CARD_TIME);
+        const nextValue = Math.min(
+            MAX_CARD_TIME,
+            Math.max(MIN_CARD_TIME, numericTime + delta),
+        );
+        if (nextValue === numericTime) {
+            return;
+        }
         try {
             await characterService.updateCharacter(characterId, {
                 cardTime: nextValue.toString(),
@@ -168,12 +311,9 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     };
 
     return (
-        <div className=" app-panel p-6 space-y-4 shadow-sm">
-            <div className=" flex items-center justify-between">
-                <div className=" space-y-2">
-                    <p className=" font-semibold text-gray-800">{name}</p>
-                    <p className=" text-gray-500">Lv {level}</p>
-                </div>
+        <div className=" app-panel p-6 space-y-5 shadow-sm">
+            <div className=" flex items-center justify-between border-b border-gray-200 pb-5">
+                <p className=" text-lg font-semibold text-gray-800">{name}</p>
                 <div className=" flex items-center text-gray-500">
                     <button
                         className=" p-1 border rounded-full border-gray-400 cursor-pointer"
@@ -192,16 +332,30 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                 </div>
             </div>
-            <div className=" grid grid-cols-1 md:grid-cols-6 gap-6">
-                <div className=" space-y-2 text-sm text-gray-600 md:col-span-2">
+            <div className=" grid grid-cols-1 md:grid-cols-7 gap-5">
+                <div className=" space-y-3 text-sm text-gray-600 md:col-span-2">
+                    <div className=" flex items-center text-gray-500">
+                        <button
+                            className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                            onClick={() => handleAdjustLevel(-1)}
+                            disabled={!characterId || level <= MIN_LEVEL}
+                        >
+                            <Minus className=" w-3 h-3" />
+                        </button>
+                        <span className=" text-gray-500 min-w-[44px] text-center">Lv {level}</span>
+                        <button
+                            className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                            onClick={() => handleAdjustLevel(1)}
+                            disabled={!characterId || level >= MAX_LEVEL}
+                        >
+                            <Plus className=" w-3 h-3" />
+                        </button>
+                    </div>
                     <p>
                         职业：<span className=" text-gray-800">{characterClass || "未设置"}</span>
                     </p>
-                    <p>
-                        阶级：<span className=" text-gray-800">{jobRank || "未设置"}</span>
-                    </p>
                 </div>
-                <div className=" space-y-2 md:col-span-4">
+                <div className=" space-y-2 md:col-span-5">
                     <div className=" flex items-center justify-between">
                         <p className=" text-sm text-gray-500">物品</p>
                     </div>
@@ -233,7 +387,15 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </div>
                 </div>
             </div>
-            <div className=" flex justify-end">
+            <div className=" flex justify-end gap-4">
+                <button
+                    className=" text-gray-400 hover:text-sky-500 transition"
+                    onClick={handleOpenEditModal}
+                    disabled={!characterId}
+                    title="编辑角色"
+                >
+                    <Pencil className=" w-5 h-5" />
+                </button>
                 <button
                     className=" text-gray-400 hover:text-rose-500 transition"
                     onClick={handleDeleteCharacter}
@@ -316,6 +478,104 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         disabled={isSavingTag}
                     >
                         创建并添加
+                    </button>
+                </div>
+            </Modal>
+            <Modal
+                isShow={isEditModalOpen}
+                setModalShow={(show) => setIsEditModalOpen(show)}
+            >
+                <p className=" text-gray-900 font-semibold">编辑角色</p>
+                <div className=" space-y-4 mt-4">
+                    <label className=" block text-sm text-gray-500">
+                        角色名称
+                        <input
+                            type="text"
+                            className=" app-input"
+                            value={editForm.name}
+                            onChange={(event) =>
+                                setEditForm(prev => ({
+                                    ...prev,
+                                    name: event.target.value,
+                                }))
+                            }
+                        />
+                    </label>
+                    <label className=" block text-sm text-gray-500">
+                        职业类型
+                        <select
+                            className=" app-select"
+                            value={editForm.classCategory}
+                            onChange={(event) => {
+                                const category = event.target.value as EClassCategory;
+                                setEditForm(prev => ({
+                                    ...prev,
+                                    classCategory: category,
+                                    className: getDefaultClassForCategory(category),
+                                }));
+                            }}
+                        >
+                            {Object.values(EClassCategory).map(category => (
+                                <option key={category} value={category}>
+                                    {category}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <label className=" block text-sm text-gray-500">
+                        职业
+                        <select
+                            className=" app-select"
+                            value={editForm.className}
+                            onChange={(event) =>
+                                setEditForm(prev => ({
+                                    ...prev,
+                                    className: event.target.value as EAllClass,
+                                }))
+                            }
+                        >
+                            {categoryToClasses[editForm.classCategory].map(className => (
+                                <option key={className} value={className}>
+                                    {className}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <label className=" block text-sm text-gray-500">
+                        等级
+                        <input
+                            type="number"
+                            min={MIN_LEVEL}
+                            max={MAX_LEVEL}
+                            className=" app-input"
+                            value={editForm.level}
+                            onChange={(event) =>
+                                setEditForm(prev => ({
+                                    ...prev,
+                                    level: event.target.value,
+                                }))
+                            }
+                        />
+                    </label>
+                    <label className=" block text-sm text-gray-500">
+                        备注
+                        <textarea
+                            className=" app-input"
+                            rows={3}
+                            value={editForm.note}
+                            onChange={(event) =>
+                                setEditForm(prev => ({
+                                    ...prev,
+                                    note: event.target.value,
+                                }))
+                            }
+                        />
+                    </label>
+                    <button
+                        className=" app-btn-primary w-full"
+                        onClick={handleSubmitEdit}
+                    >
+                        保存
                     </button>
                 </div>
             </Modal>
