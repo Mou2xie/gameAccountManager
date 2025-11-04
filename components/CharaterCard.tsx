@@ -68,6 +68,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     const [assignedTags, setAssignedTags] = useState<CharacterTag[]>([]);
     const [availableTags, setAvailableTags] = useState<ITag[]>([]);
     const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+    const [isTagEditMode, setIsTagEditMode] = useState(false);
     const [selectedTagId, setSelectedTagId] = useState<string>("");
     const [newTagLabel, setNewTagLabel] = useState("");
     const [newTagAmount] = useState("");
@@ -119,6 +120,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
 
     const handleOpenTagModal = async () => {
         await loadAvailableTags();
+        setIsTagEditMode(false);
         setIsTagModalOpen(true);
     };
 
@@ -311,12 +313,34 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     };
 
     return (
-        <div className=" app-panel p-6 space-y-5 shadow-sm">
-            <div className=" flex items-center justify-between border-b border-gray-200 pb-5">
-                <p className=" text-lg font-semibold text-gray-800">{name}</p>
-                <div className=" flex items-center text-gray-500">
+        <div className=" app-panel p-5 space-y-3 shadow-sm flex flex-col">
+            <div className=" grid grid-cols-3 border-b border-gray-200 pb-3">
+                <div className=" space-y-1">
+                    <p className=" text-lg font-semibold text-gray-800">{name}</p>
+                    <p className=" text-sm text-gray-600">
+                        职业：{characterClass || "未设置"}
+                    </p>
+                </div>
+                <div className=" flex items-center text-gray-500 ">
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer"
+                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        onClick={() => handleAdjustLevel(-1)}
+                        disabled={!characterId || level <= MIN_LEVEL}
+                    >
+                        <Minus className=" w-4 h-4" />
+                    </button>
+                    <span className="  text-sm font-medium min-w-[60px] text-center">Lv {level}</span>
+                    <button
+                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        onClick={() => handleAdjustLevel(1)}
+                        disabled={!characterId || level >= MAX_LEVEL}
+                    >
+                        <Plus className=" w-4 h-4" />
+                    </button>
+                </div>
+                <div className=" flex items-center justify-end text-gray-500">
+                    <button
+                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(-1)}
                         disabled={!characterId}
                     >
@@ -324,7 +348,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                     <span className=" text-sm font-medium min-w-[72px] text-center">{displayCardTime}</span>
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer"
+                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(1)}
                         disabled={!characterId}
                     >
@@ -332,62 +356,36 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                 </div>
             </div>
-            <div className=" grid grid-cols-1 md:grid-cols-7 gap-5">
-                <div className=" space-y-3 text-sm text-gray-600 md:col-span-2">
-                    <div className=" flex items-center text-gray-500">
-                        <button
-                            className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
-                            onClick={() => handleAdjustLevel(-1)}
-                            disabled={!characterId || level <= MIN_LEVEL}
+            <div className=" space-y-3 grow">
+                <p className=" text-sm text-gray-500">物品</p>
+                <div className=" flex flex-wrap gap-2 items-center">
+                    {assignedTags.map(tag => (
+                        <span
+                            key={tag.characterTagId}
+                            className={` px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${badgeClassName}`}
                         >
-                            <Minus className=" w-3 h-3" />
-                        </button>
-                        <span className=" text-gray-500 min-w-[44px] text-center">Lv {level}</span>
-                        <button
-                            className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
-                            onClick={() => handleAdjustLevel(1)}
-                            disabled={!characterId || level >= MAX_LEVEL}
-                        >
-                            <Plus className=" w-3 h-3" />
-                        </button>
-                    </div>
-                    <p>
-                        职业：<span className=" text-gray-800">{characterClass || "未设置"}</span>
-                    </p>
-                </div>
-                <div className=" space-y-2 md:col-span-5">
-                    <div className=" flex items-center justify-between">
-                        <p className=" text-sm text-gray-500">物品</p>
-                    </div>
-                    <div className=" flex flex-wrap gap-2 items-center">
-                        {assignedTags.map(tag => (
-                            <span
-                                key={tag.characterTagId}
-                                className={` px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${badgeClassName}`}
+                            {tag.label}
+                            {tag.amount ? `(${tag.amount})` : ""}
+                            <button
+                                className=" text-gray-500 hover:text-rose-500"
+                                onClick={() => handleRemoveTag(tag.id)}
+                                title="移除物品"
                             >
-                                {tag.label}
-                                {tag.amount ? `(${tag.amount})` : ""}
-                                <button
-                                    className=" text-gray-500 hover:text-rose-500"
-                                    onClick={() => handleRemoveTag(tag.id)}
-                                    title="移除物品"
-                                >
-                                    <X className=" w-3 h-3" />
-                                </button>
-                            </span>
-                        ))}
-                        <button
-                            className=" px-3 py-1 rounded-full text-xs font-medium border border-dashed border-gray-400 text-gray-500 hover:border-gray-600 hover:text-gray-700 transition"
-                            onClick={handleOpenTagModal}
-                            disabled={!characterId}
-                            title="添加物品"
-                        >
-                            <Plus className=" w-3 h-3 inline-block mr-1" /> 添加
-                        </button>
-                    </div>
+                                <X className=" w-3 h-3" />
+                            </button>
+                        </span>
+                    ))}
+                    <button
+                        className=" px-3 py-1 rounded-full text-xs font-medium border border-dashed border-gray-400 text-gray-500 hover:border-gray-600 hover:text-gray-700 transition"
+                        onClick={handleOpenTagModal}
+                        disabled={!characterId}
+                        title="添加物品"
+                    >
+                        <Plus className=" w-3 h-3 inline-block mr-1" /> 添加
+                    </button>
                 </div>
             </div>
-            <div className=" flex justify-end gap-4">
+            <div className=" flex justify-end gap-4 ">
                 <button
                     className=" text-gray-400 hover:text-sky-500 transition"
                     onClick={handleOpenEditModal}
@@ -411,6 +409,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     if (!show) {
                         setSelectedTagId("");
                         setNewTagLabel("");
+                        setIsTagEditMode(false);
                     }
                     setIsTagModalOpen(show);
                 }}
@@ -418,7 +417,16 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                 <p className=" text-gray-500 font-semibold">添加物品</p>
                 <div className="mt-3">
                     <div>
-                        <p className=" text-sm text-gray-500">从已有物品中选择</p>
+                        <div className=" flex items-center justify-between">
+                            <p className=" text-sm text-gray-500">从已有物品中选择</p>
+                            <button
+                                type="button"
+                                className=" text-xs text-gray-400 hover:text-gray-600 transition"
+                                onClick={() => setIsTagEditMode(prev => !prev)}
+                            >
+                                {isTagEditMode ? "完成编辑" : "编辑物品"}
+                            </button>
+                        </div>
                         <div className=" flex flex-wrap gap-2 mt-3">
                             {availableTags.length > 0 ? (
                                 availableTags.map(tag => {
@@ -446,14 +454,16 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                                             >
                                                 {tag.label}
                                             </button>
-                                            <button
-                                                type="button"
-                                                className=" text-gray-400 hover:text-rose-500"
-                                                onClick={() => handleDeleteTag(tagId, tag.label)}
-                                                title="删除物品"
-                                            >
-                                                <Trash2 className=" w-3 h-3" />
-                                            </button>
+                                            {isTagEditMode && (
+                                                <button
+                                                    type="button"
+                                                    className=" text-gray-400 hover:text-rose-500"
+                                                    onClick={() => handleDeleteTag(tagId, tag.label)}
+                                                    title="删除物品"
+                                                >
+                                                    <X className=" w-3 h-3" />
+                                                </button>
+                                            )}
                                         </span>
                                     );
                                 })
