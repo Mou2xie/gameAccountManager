@@ -387,7 +387,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
             </div>
             <div className=" flex justify-end gap-4 ">
                 <button
-                    className=" text-gray-400 hover:text-sky-500 transition"
+                    className=" text-gray-400 hover:text-gray-600 transition"
                     onClick={handleOpenEditModal}
                     disabled={!characterId}
                     title="编辑角色"
@@ -501,7 +501,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         角色名称
                         <input
                             type="text"
-                            className=" app-input"
+                            className=" app-input mt-2"
                             value={editForm.name}
                             onChange={(event) =>
                                 setEditForm(prev => ({
@@ -514,7 +514,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     <label className=" block text-sm text-gray-500">
                         职业类型
                         <select
-                            className=" app-select"
+                            className=" app-select mt-2"
                             value={editForm.classCategory}
                             onChange={(event) => {
                                 const category = event.target.value as EClassCategory;
@@ -535,7 +535,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     <label className=" block text-sm text-gray-500">
                         职业
                         <select
-                            className=" app-select"
+                            className=" app-select mt-2"
                             value={editForm.className}
                             onChange={(event) =>
                                 setEditForm(prev => ({
@@ -557,7 +557,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                             type="number"
                             min={MIN_LEVEL}
                             max={MAX_LEVEL}
-                            className=" app-input"
+                            className=" app-input mt-2"
                             value={editForm.level}
                             onChange={(event) =>
                                 setEditForm(prev => ({
@@ -570,7 +570,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     <label className=" block text-sm text-gray-500">
                         备注
                         <textarea
-                            className=" app-input"
+                            className=" app-input mt-2"
                             rows={3}
                             value={editForm.note}
                             onChange={(event) =>

@@ -68,7 +68,7 @@ export default function Home() {
         (currentMainAccount && subAccounts.length < 10) && (
           <div className=" flex justify-center">
             <button
-              className=" app-btn-outline w-full max-w-xl"
+              className=" app-btn-outline w-full max-w-xl text-gray-500"
               onClick={() => setCreateSubAccountModalFlag(true)}
             >
               新建子账号

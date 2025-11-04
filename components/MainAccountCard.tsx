@@ -92,7 +92,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                     currentMainAccount && (
                         <>
                             <button
-                                className=" icon-button"
+                                className=" icon-button hover:text-rose-500 hover:border-rose-500"
                                 onClick={handleDeleteMainAccount}
                                 title="删除主账号"
                             >

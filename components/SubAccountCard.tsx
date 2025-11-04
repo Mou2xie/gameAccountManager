@@ -266,7 +266,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                         <Pencil className=" w-4 h-4" />
                     </button>
                     <button
-                        className=" icon-button text-rose-500 border-rose-200"
+                        className=" icon-button hover:text-rose-500 hover:border-rose-500"
                         disabled={isDeletingSubAccount}
                         onClick={handleDeleteSubAccount}
                         title="删除子账号"
@@ -319,7 +319,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                         角色名称
                         <input
                             type="text"
-                            className=" app-input"
+                            className=" app-input mt-2"
                             value={newCharacter.name}
                             onChange={(event) =>
                                 setNewCharacter(prev => ({
@@ -332,7 +332,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     <label className=" block text-sm text-gray-500">
                         职业类型
                         <select
-                            className=" app-select"
+                            className=" app-select mt-2"
                             value={newCharacter.classCategory}
                             onChange={(event) => {
                                 const category = event.target.value as EClassCategory;
@@ -354,7 +354,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     <label className=" block text-sm text-gray-500">
                         职业
                         <select
-                            className=" app-select"
+                            className=" app-select mt-2"
                             value={newCharacter.className}
                             onChange={(event) =>
                                 setNewCharacter(prev => ({
@@ -376,7 +376,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                             type="number"
                             min={1}
                             max={120}
-                            className=" app-input"
+                            className=" app-input mt-2"
                             value={newCharacter.level}
                             onChange={(event) =>
                                 setNewCharacter(prev => ({
@@ -389,7 +389,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     <label className=" block text-sm text-gray-500">
                         备注
                         <textarea
-                            className=" app-input"
+                            className=" app-input mt-2"
                             rows={3}
                             value={newCharacter.note}
                             onChange={(event) =>
@@ -424,7 +424,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                         子账号名称
                         <input
                             type="text"
-                            className=" app-input"
+                            className=" app-input mt-2"
                             value={editForm.name}
                             onChange={(event) =>
                                 setEditForm(prev => ({
@@ -437,7 +437,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     <label className=" block text-sm text-gray-500">
                         备注
                         <textarea
-                            className=" app-input"
+                            className=" app-input mt-2"
                             rows={3}
                             value={editForm.note}
                             onChange={(event) =>
