@@ -54,6 +54,10 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
 
     const handleDeleteMainAccount = () => {
         if (!currentMainAccount) return;
+        const confirmed = window.confirm(`确定删除主账号「${currentMainAccount.account}」吗？`);
+        if (!confirmed) {
+            return;
+        }
         mainAccountService.deleteMainAccount(currentMainAccount.id).then((res) => {
             res && mainAccountService.getAllMainAccounts().then((accounts) => {
                 setMainAccountsList(accounts);
@@ -65,8 +69,8 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
 
     return (
         <div className=" app-card flex flex-wrap items-center justify-between gap-6">
-            <div className=" flex flex-col gap-2">
-                <p className=" text-sm font-medium text-gray-500">当前账号</p>
+            <div className=" flex items-center gap-3">
+                <p className=" text-sm font-medium text-gray-500">当前主账号</p>
                 <div className=" relative min-w-[220px]">
                     <select
                         className=" app-select w-full pr-10"
@@ -107,7 +111,7 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
                         </>
                     )
                 }
-                <button className=" app-btn-primary" onClick={() => setCreateMainAccountModalFlag(true)}>新建账号</button>
+                <button className=" app-btn-primary" onClick={() => setCreateMainAccountModalFlag(true)}>新建主账号</button>
             </div>
 
             {/* create main account modal */}

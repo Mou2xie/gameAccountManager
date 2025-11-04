@@ -65,4 +65,11 @@ export const tagService = {
         }
         await db.characterTags.delete(link.id);
     },
+
+    async deleteTag(tagId: number): Promise<void> {
+        await db.transaction("rw", db.tags, db.characterTags, async () => {
+            await db.characterTags.where("tagId").equals(tagId).delete();
+            await db.tags.delete(tagId);
+        });
+    },
 };
