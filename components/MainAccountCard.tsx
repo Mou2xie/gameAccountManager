@@ -64,56 +64,83 @@ export const MainAccountCard = ({ currentMainAccount, setCurrentMainAccount }: M
     }
 
     return (
-        <div className=" flex justify-between items-center h-20 bg-gray-100 rounded-xl px-10">
-            <div className=" flex items-center gap-3">
-                <p className=" text-gray-500">当前账号:</p>
-                <select
-                    className="select w-50 focus:outline-none account-select"
-                    value={currentMainAccount?.id || ""}
-                    onChange={(e) => {
-                        const selectedId = Number(e.target.value);
-                        const selectedAccount = mainAccountsList.find(account => account.id === selectedId) || null;
-                        setCurrentMainAccount(selectedAccount);
-                    }}>
-                    <option value="" disabled>选择主账号</option>
-                    {
-                        mainAccountsList.map(({ id, account }) => <option key={id} value={id}>{account}</option>)
-                    }
-                </select>
+        <div className=" app-card flex flex-wrap items-center justify-between gap-6">
+            <div className=" flex flex-col gap-2">
+                <p className=" text-sm font-medium text-gray-500">当前账号</p>
+                <div className=" relative min-w-[220px]">
+                    <select
+                        className=" app-select w-full pr-10"
+                        value={currentMainAccount?.id || ""}
+                        onChange={(e) => {
+                            const selectedId = Number(e.target.value);
+                            const selectedAccount = mainAccountsList.find(account => account.id === selectedId) || null;
+                            setCurrentMainAccount(selectedAccount);
+                        }}>
+                        <option value="">选择主账号</option>
+                        {
+                            mainAccountsList.map(({ id, account }) => <option key={id} value={id}>{account}</option>)
+                        }
+                    </select>
+                    <span className=" pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                        ▾
+                    </span>
+                </div>
             </div>
-            <div className=" flex items-center gap-8">
+            <div className=" flex items-center gap-4">
                 {
                     currentMainAccount && (
                         <>
-                            <div className=" flex items-center gap-1 cursor-pointer" onClick={() => setEditMainAccountFlag(true)}>
-                                <SquarePen size={20} className=" text-gray-400" />
-                                <span className=" text-gray-400">编辑</span>
-                            </div>
-                            <div className=" flex items-center gap-1 cursor-pointer" onClick={handleDeleteMainAccount}>
-                                <Trash2 size={20} className=" text-gray-400" />
-                                <span className=" text-gray-400">删除</span>
-                            </div>
+                            <button
+                                className=" icon-button"
+                                onClick={() => setEditMainAccountFlag(true)}
+                                title="重命名主账号"
+                            >
+                                <SquarePen className=" w-4 h-4" />
+                            </button>
+                            <button
+                                className=" icon-button"
+                                onClick={handleDeleteMainAccount}
+                                title="删除主账号"
+                            >
+                                <Trash2 className=" w-4 h-4" />
+                            </button>
                         </>
                     )
                 }
-                <button className="btn btn-outline btn-secondary" onClick={() => setCreateMainAccountModalFlag(true)}>新建账号</button>
+                <button className=" app-btn-primary" onClick={() => setCreateMainAccountModalFlag(true)}>新建账号</button>
             </div>
 
             {/* create main account modal */}
             <Modal isShow={createMainAccountModalFlag} setModalShow={setCreateMainAccountModalFlag}>
                 <p className=" text-gray-500">新建主账号</p>
-                <div className=" flex gap-2 mt-5">
-                    <input type="text" placeholder="输入主账号" className=" input w-1/2 focus:outline-none" onChange={(e) => setNewMainAccount(e.target.value)} />
-                    <button className=" block btn btn-outline btn-info" disabled={!newMainAccount} onClick={handleCreateMainAccount}>创建</button>
+                <div className=" flex flex-col gap-3 mt-5">
+                    <input
+                        type="text"
+                        placeholder="输入主账号"
+                        className=" app-input"
+                        onChange={(e) => setNewMainAccount(e.target.value)}
+                    />
+                    <button
+                        className=" app-btn-primary w-full"
+                        disabled={!newMainAccount.trim()}
+                        onClick={handleCreateMainAccount}
+                    >
+                        创建
+                    </button>
                 </div>
             </Modal>
 
             {/* edit main account modal */}
             <Modal isShow={editMainAccountFlag} setModalShow={setEditMainAccountFlag}>
                 <p className=" text-gray-500">重命名当前账号</p>
-                <div className=" flex gap-2 mt-5">
-                    <input type="text" className=" input w-1/2 focus:outline-none" value={currentMainAccount?.account || ""} onChange={(e) => setCurrentMainAccount({ ...currentMainAccount!, account: e.target.value })} />
-                    <button className=" block btn btn-outline btn-info" onClick={handleEditMainAccount}>保存</button>
+                <div className=" flex flex-col gap-3 mt-5">
+                    <input
+                        type="text"
+                        className=" app-input"
+                        value={currentMainAccount?.account || ""}
+                        onChange={(e) => setCurrentMainAccount({ ...currentMainAccount!, account: e.target.value })}
+                    />
+                    <button className=" app-btn-primary w-full" onClick={handleEditMainAccount}>保存</button>
                 </div>
             </Modal>
         </div>

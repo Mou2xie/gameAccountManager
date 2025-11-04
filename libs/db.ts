@@ -1,14 +1,58 @@
-import Dexie from "dexie";
+import Dexie, { Table } from "dexie";
 
-export const db = new Dexie("GameAccountManagerDB");
+export interface ICharacter {
+    id?: number;
+    subId: number;
+    name: string;
+    class?: string;
+    level: number;
+    jobRank?: string;
+    note?: string;
+    cardTime?: string;
+    index?: number;
+}
 
-// 定义表结构
-const tables = {
-    mainAccounts: "++id, account", // 主账号表
-    subAccounts: "++id, mainId, name, note", // 子账号表
-    characters: "++id, subId, name, class, level, jobRank, note, cardTime, index", // 角色表
-    tags: "++id, label, amount", // 标签表
-    characterTags: "++id, charId, tagId, [charId+tagId]" // 角色标签关联表
-};
+export interface ISubAccount {
+    id?: number;
+    mainId: number;
+    name: string;
+    note?: string;
+}
 
-db.version(1).stores(tables);
+export interface IMainAccount {
+    id?: number;
+    account: string;
+}
+
+export interface ITag {
+    id?: number;
+    label: string;
+    amount?: number;
+}
+
+export interface ICharacterTag {
+    id?: number;
+    charId: number;
+    tagId: number;
+}
+
+export class GameDB extends Dexie {
+    characters!: Table<ICharacter>;
+    subAccounts!: Table<ISubAccount>;
+    mainAccounts!: Table<IMainAccount>;
+    tags!: Table<ITag>;
+    characterTags!: Table<ICharacterTag>;
+
+    constructor() {
+        super("GameAccountManagerDB");
+        this.version(1).stores({
+            mainAccounts: "++id, account",
+            subAccounts: "++id, mainId, name, note",
+            characters: "++id, subId, name, class, level, jobRank, note, cardTime, index",
+            tags: "++id, label, amount",
+            characterTags: "++id, charId, tagId, [charId+tagId]"
+        });
+    }
+}
+
+export const db = new GameDB();
