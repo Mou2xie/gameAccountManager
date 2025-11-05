@@ -254,9 +254,9 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
     };
 
     return (
-        <div className=" app-panel p-6 space-y-6 bg-white shadow-sm">
+        <div className=" app-panel p-6 space-y-6 bg-[var(--color-surface-card)] border-2 border-[var(--color-border-soft)]">
             <div className=" flex flex-wrap items-center gap-3 justify-between">
-                <p className=" text-xl font-semibold text-gray-900">{subAccount?.name}</p>
+                <p className=" text-xl font-semibold text-[var(--color-text)]">{subAccount?.name}</p>
                 <div className=" flex gap-3">
                     <button
                         className=" icon-button"
@@ -266,7 +266,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                         <Pencil className=" w-4 h-4" />
                     </button>
                     <button
-                        className=" icon-button hover:text-rose-500 hover:border-rose-500"
+                        className=" icon-button hover:text-[var(--color-accent)] hover:border-[var(--color-accent)]"
                         disabled={isDeletingSubAccount}
                         onClick={handleDeleteSubAccount}
                         title="删除子账号"
@@ -290,7 +290,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     ) : (
                         <button
                             key={`${subAccount.id}-${slotIndex}`}
-                            className=" flex h-full min-h-[180px] flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-slate-50 text-gray-500 transition hover:border-gray-400 hover:text-gray-700"
+                            className=" flex h-full min-h-[180px] flex-col items-center justify-center rounded-2xl border border-dashed border-[var(--color-border-strong)] bg-[var(--color-surface-panel)] text-[var(--color-text-muted)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
                             onClick={() => {
                                 if (!subAccount.id) return;
                                 setTargetIndex(slotIndex);
@@ -311,11 +311,11 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                     setIsCreateModalOpen(show);
                 }}
             >
-                <p className=" text-gray-900 font-semibold">
+                <p className=" text-[var(--color-text)] font-semibold">
                     添加{targetIndex === 0 ? "左侧" : targetIndex === 2 ? "右侧" : ""}角色
                 </p>
                 <div className=" space-y-4 mt-4">
-                    <label className=" block text-sm text-gray-500">
+                    <label className=" block text-sm text-[var(--color-text-muted)]">
                         角色名称
                         <input
                             type="text"
@@ -329,7 +329,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                             }
                         />
                     </label>
-                    <label className=" block text-sm text-gray-500">
+                    <label className=" block text-sm text-[var(--color-text-muted)]">
                         职业类型
                         <select
                             className=" app-select mt-2"
@@ -351,7 +351,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                             ))}
                         </select>
                     </label>
-                    <label className=" block text-sm text-gray-500">
+                    <label className=" block text-sm text-[var(--color-text-muted)]">
                         职业
                         <select
                             className=" app-select mt-2"
@@ -370,7 +370,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                             ))}
                         </select>
                     </label>
-                    <label className=" block text-sm text-gray-500">
+                    <label className=" block text-sm text-[var(--color-text-muted)]">
                         等级
                         <input
                             type="number"
@@ -386,7 +386,7 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
                             }
                         />
                     </label>
-                    <label className=" block text-sm text-gray-500">
+                    <label className=" block text-sm text-[var(--color-text-muted)]">
                         备注
                         <textarea
                             className=" app-input mt-2"

@@ -257,7 +257,8 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
         }
     };
 
-    const badgeClassName = "border border-gray-400 text-gray-600 bg-white";
+    const badgeClassName =
+        "border border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-muted)]";
 
     const handleAdjustCardTime = async (delta: number) => {
         if (!characterId) {
@@ -313,17 +314,17 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     };
 
     return (
-        <div className=" app-panel p-5 space-y-3 shadow-sm flex flex-col">
-            <div className=" grid grid-cols-3 border-b border-gray-200 pb-3">
+        <div className=" app-panel p-5 space-y-3 flex flex-col">
+            <div className=" grid grid-cols-3 border-b border-[var(--color-border-strong)] pb-3">
                 <div className=" space-y-1">
-                    <p className=" text-lg font-semibold text-gray-800">{name}</p>
-                    <p className=" text-sm text-gray-600">
+                    <p className=" text-xl text-gray-700">{name}</p>
+                    <p className=" text-sm text-[var(--color-accent)]">
                         职业：{characterClass || "未设置"}
                     </p>
                 </div>
-                <div className=" flex items-center text-gray-500 ">
+                <div className=" flex items-center text-[var(--color-accent)]">
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustLevel(-1)}
                         disabled={!characterId || level <= MIN_LEVEL}
                     >
@@ -331,16 +332,16 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                     <span className="  text-sm font-medium min-w-[60px] text-center">Lv {level}</span>
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustLevel(1)}
                         disabled={!characterId || level >= MAX_LEVEL}
                     >
                         <Plus className=" w-4 h-4" />
                     </button>
                 </div>
-                <div className=" flex items-center justify-end text-gray-500">
+                <div className=" flex items-center justify-end text-[var(--color-accent)]">
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(-1)}
                         disabled={!characterId}
                     >
@@ -348,7 +349,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                     <span className=" text-sm font-medium min-w-[72px] text-center">{displayCardTime}</span>
                     <button
-                        className=" p-1 border rounded-full border-gray-400 cursor-pointer disabled:opacity-50"
+                        className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(1)}
                         disabled={!characterId}
                     >
@@ -357,7 +358,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                 </div>
             </div>
             <div className=" space-y-3 grow">
-                <p className=" text-sm text-gray-500">物品</p>
+                <p className=" text-sm text-[var(--color-accent)]">物品</p>
                 <div className=" flex flex-wrap gap-2 items-center">
                     {assignedTags.map(tag => (
                         <span
@@ -376,7 +377,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         </span>
                     ))}
                     <button
-                        className=" px-3 py-1 rounded-full text-xs font-medium border border-dashed border-gray-400 text-gray-500 hover:border-gray-600 hover:text-gray-700 transition"
+                        className=" px-3 py-1 rounded-full text-xs font-medium border border-dashed border-[var(--color-primary)] text-[var(--color-primary)] hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition"
                         onClick={handleOpenTagModal}
                         disabled={!characterId}
                         title="添加物品"
@@ -387,7 +388,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
             </div>
             <div className=" flex justify-end gap-4 ">
                 <button
-                    className=" text-gray-400 hover:text-gray-600 transition"
+                    className=" text-[var(--color-primary)] hover:text-[var(--color-accent)] transition cursor-pointer"
                     onClick={handleOpenEditModal}
                     disabled={!characterId}
                     title="编辑角色"
@@ -395,7 +396,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     <Pencil className=" w-5 h-5" />
                 </button>
                 <button
-                    className=" text-gray-400 hover:text-rose-500 transition"
+                    className=" text-[var(--color-primary)] hover:text-[var(--color-accent)] transition cursor-pointer"
                     onClick={handleDeleteCharacter}
                     disabled={!characterId}
                     title="删除角色"

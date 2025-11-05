@@ -7,15 +7,14 @@ type TabItem = {
 
 export const NavBar = () => {
     return (
-        <nav className=" h-16 px-20 grid grid-cols-3 bg-white shadow-md shadow-gray-100">
+        <nav className=" h-16 px-20 grid grid-cols-3 bg-[var(--color-surface-card)] border-b border-[var(--color-border-strong)] shadow-md shadow-[rgba(57,51,43,0.08)]">
             <div className=" flex items-center">
-                <div className=" mr-3">魔力宝贝账号管理工具</div>
-                <div className="badge badge-neutral badge-outline">v 0.0.9</div>
+                <div className=" mr-3 text-[var(--color-text)]">魔力宝贝账号管理工具</div>
+                <div className="badge border border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-muted)]">v 0.0.9</div>
             </div>
             <div></div>
-            <div className=" flex items-center justify-end gap-5 text-gray-500 text-sm">
-                <Link href="/" className=" hover:text-gray-800">加入QQ群</Link>
-                <Link href="/" className=" hover:text-gray-800">使用说明</Link>
+            <div className=" flex items-center justify-end gap-5 text-[var(--color-text-muted)] text-sm">
+                <Link href="/" className=" hover:text-[var(--color-primary)]">加入QQ群</Link>
             </div>
         </nav>
     );

@@ -67,7 +67,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
     return (
         <div className=" app-card flex flex-wrap items-center justify-between gap-6">
             <div className=" flex items-center gap-3">
-                <p className=" text-sm font-medium text-gray-500">当前主账号</p>
+                <p className=" text-sm font-medium text-[var(--color-text-muted)]">当前主账号</p>
                 <div className=" relative min-w-[220px]">
                     <select
                         className=" app-select w-full pr-10"
@@ -82,7 +82,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                             mainAccountsList.map(({ id, account }) => <option key={id} value={id}>{account}</option>)
                         }
                     </select>
-                    <span className=" pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400">
+                    <span className=" pointer-events-none absolute inset-y-0 right-3 flex items-center text-[var(--color-text-muted)] opacity-70">
                         ▾
                     </span>
                 </div>
@@ -92,7 +92,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                     currentMainAccount && (
                         <>
                             <button
-                                className=" icon-button hover:text-rose-500 hover:border-rose-500"
+                                className=" icon-button hover:text-[var(--color-accent)] hover:border-[var(--color-accent)]"
                                 onClick={handleDeleteMainAccount}
                                 title="删除主账号"
                             >
@@ -106,7 +106,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
 
             {/* create main account modal */}
             <Modal isShow={createMainAccountModalFlag} setModalShow={setCreateMainAccountModalFlag}>
-                <p className=" text-gray-500">新建主账号</p>
+                <p className=" text-[var(--color-text-muted)]">新建主账号</p>
                 <div className=" flex flex-col gap-3 mt-5">
                     <input
                         type="text"
