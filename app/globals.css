@@ -9,7 +9,7 @@
 }
 
 :root {
-    --color-app-background: #f6f2e8;
+    --color-app-background: #fdedcc;
     --color-surface-card: #f8f4eb;
     --color-surface-panel: #e9e6d7;
     --color-border-strong: #d8d3c0;
@@ -26,6 +26,15 @@ body {
     font-family: var(--font-noto), sans-serif;
     color: var(--color-text);
     background-color: var(--color-app-background);
+    margin: 0;
+}
+
+body.home-background {
+    background-image: url("/bg-min.png");
+    background-repeat: no-repeat;
+    background-position: center 75%;
+    background-attachment: fixed;
+    background-size: 60% auto;
 }
 
 @layer components {

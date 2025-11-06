@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { SubAccountCard } from "@/components/SubAccountCard";
 import { MainAccountCard } from "@/components/MainAccountCard";
 import { subAccountService } from "@/services/subAccountService";
@@ -25,6 +25,13 @@ export default function Home() {
   const [subAccounts, setSubAccounts] = useState<Array<ISubAccount>>([]);
   const [createSubAccountModalFlag, setCreateSubAccountModalFlag] = useState(false);
   const [newSubAccount, setNewSubAccount] = useState({ name: "", note: "" });
+
+  useEffect(() => {
+    document.body.classList.add("home-background");
+    return () => {
+      document.body.classList.remove("home-background");
+    };
+  }, []);
 
   const loadSubAccounts = useCallback(async (mainAccountId: number) => {
     const list = await subAccountService.getSubAccountsByMainId(mainAccountId);
