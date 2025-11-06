@@ -24,10 +24,17 @@ export interface IMainAccount {
     account: string;
 }
 
+export interface ITagColorSet {
+    background: string;
+    border: string;
+    text: string;
+}
+
 export interface ITag {
     id?: number;
     label: string;
     amount?: number;
+    colorSet?: ITagColorSet;
 }
 
 export interface ICharacterTag {

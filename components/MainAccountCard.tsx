@@ -101,7 +101,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                         </>
                     )
                 }
-                <button className=" app-btn-primary" onClick={() => setCreateMainAccountModalFlag(true)}>新建主账号</button>
+                <button className=" app-btn-primary cursor-pointer" onClick={() => setCreateMainAccountModalFlag(true)}>新建主账号</button>
             </div>
 
             {/* create main account modal */}

@@ -16,7 +16,7 @@
     --color-border-soft: #fdfbef;
     --color-primary: #376876;
     --color-primary-hover: #2b4d4f;
-    --color-accent: #815b46;
+    --color-accent: #b36f48;
     --color-muted: #c5dfe0;
     --color-text: #3f3a35;
     --color-text-muted: #815b46;
@@ -26,7 +26,6 @@ body {
     font-family: var(--font-noto), sans-serif;
     color: var(--color-text);
     background-color: var(--color-app-background);
-    margin: 0;
 }
 
 body.home-background {
@@ -34,7 +33,7 @@ body.home-background {
     background-repeat: no-repeat;
     background-position: center 75%;
     background-attachment: fixed;
-    background-size: 60% auto;
+    background-size: 50% auto;
 }
 
 @layer components {

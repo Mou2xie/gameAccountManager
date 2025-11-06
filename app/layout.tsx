@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={notoSans.variable}>
-      <body>
+      <body className=" min-h-screen">
         <NavBar />
         <Main>{children}</Main>
       </body>

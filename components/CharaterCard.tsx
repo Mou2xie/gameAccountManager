@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { ICharacter, ITag } from "@/libs/db";
 import { Modal } from "./Modal";
 import { tagService } from "@/services/tagService";
 import { characterService } from "@/services/characterService";
-import { Plus, Minus, Trash2, X, Pencil } from "lucide-react";
+import { Plus, Minus, Trash2, X, Pencil, HelpCircle } from "lucide-react";
 import {
     EAllClass,
     EClassCategory,
@@ -45,6 +45,21 @@ const getNormalizedClassName = (
     categoryToClasses[category].includes(className as EAllClass)
         ? (className as EAllClass)
         : getDefaultClassForCategory(category);
+
+const buildTagStyle = (tag?: Pick<ITag, "colorSet">): CSSProperties => {
+    if (!tag?.colorSet) {
+        return {
+            borderColor: "var(--color-primary)",
+            backgroundColor: "var(--color-muted)",
+            color: "var(--color-primary)",
+        } satisfies CSSProperties;
+    }
+    return {
+        borderColor: tag.colorSet.border,
+        backgroundColor: tag.colorSet.background,
+        color: tag.colorSet.text,
+    } satisfies CSSProperties;
+};
 
 type CharacterCardProps = {
     character: ICharacter & { subAccountId: number };
@@ -257,8 +272,8 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
         }
     };
 
-    const badgeClassName =
-        "border border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-muted)]";
+    const tagPillClassName =
+        "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 border transition-colors";
 
     const handleAdjustCardTime = async (delta: number) => {
         if (!characterId) {
@@ -322,7 +337,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         职业：{characterClass || "未设置"}
                     </p>
                 </div>
-                <div className=" flex items-center text-[var(--color-accent)]">
+                <div className=" flex items-center text-[var(--color-accent)] justify-center">
                     <button
                         className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustLevel(-1)}
@@ -355,6 +370,15 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     >
                         <Plus className=" w-4 h-4" />
                     </button>
+                    <div className=" relative ml-3 group">
+                        <HelpCircle
+                            className=" w-4 h-4 text-(--color-primary) cursor-pointer"
+                            aria-label="卡时说明"
+                        />
+                        <span className=" pointer-events-none absolute left-1/2 bottom-full z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[10px] font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">
+                            卡时每天6点自动+1
+                        </span>
+                    </div>
                 </div>
             </div>
             <div className=" space-y-3 grow">
@@ -363,12 +387,13 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     {assignedTags.map(tag => (
                         <span
                             key={tag.characterTagId}
-                            className={` px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${badgeClassName}`}
+                            className={tagPillClassName}
+                            style={buildTagStyle(tag)}
                         >
                             {tag.label}
                             {tag.amount ? `(${tag.amount})` : ""}
                             <button
-                                className=" text-gray-500 hover:text-rose-500"
+                                className=" text-current opacity-70 hover:opacity-100 cursor-pointer hover:text-rose-500"
                                 onClick={() => handleRemoveTag(tag.id)}
                                 title="移除物品"
                             >
@@ -436,34 +461,58 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                                         return null;
                                     }
                                     const alreadyAssigned = assignedTagIds.has(tagId);
+                                    const canAttach = !alreadyAssigned && !isTagEditMode && !isSavingTag;
                                     return (
                                         <span
                                             key={tagId}
-                                            className={` flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium transition ${alreadyAssigned
-                                                ? " border-gray-200 text-gray-400"
-                                                : " border-gray-300 text-gray-600 hover:border-info hover:text-info"
-                                                }`}
+                                            className={`${tagPillClassName} ${alreadyAssigned
+                                                ? " cursor-default border-gray-200 bg-gray-50 text-gray-400"
+                                                : canAttach
+                                                    ? " cursor-pointer hover:opacity-90"
+                                                    : " cursor-default"}`}
+                                            style={alreadyAssigned ? undefined : buildTagStyle(tag)}
+                                            onClick={() => {
+                                                if (!canAttach) {
+                                                    return;
+                                                }
+                                                void handleAttachExistingTag(tagId);
+                                            }}
+                                            role="button"
+                                            tabIndex={canAttach ? 0 : -1}
+                                            onKeyDown={(event) => {
+                                                if (!canAttach) {
+                                                    return;
+                                                }
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    event.preventDefault();
+                                                    void handleAttachExistingTag(tagId);
+                                                }
+                                            }}
+                                            aria-disabled={!canAttach}
                                         >
-                                            <button
-                                                type="button"
-                                                className={` ${alreadyAssigned ? " cursor-not-allowed opacity-60" : ""}`}
-                                                onClick={() => {
-                                                    if (alreadyAssigned) return;
-                                                    handleAttachExistingTag(tagId);
-                                                }}
-                                                disabled={alreadyAssigned}
-                                            >
+                                            <span className={` text-current ${alreadyAssigned ? " opacity-60" : ""}`}>
                                                 {tag.label}
-                                            </button>
+                                            </span>
                                             {isTagEditMode && (
-                                                <button
-                                                    type="button"
-                                                    className=" text-gray-400 hover:text-rose-500"
-                                                    onClick={() => handleDeleteTag(tagId, tag.label)}
+                                                <span
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    className=" text-current opacity-60 hover:opacity-100 cursor-pointer hover:text-rose-500"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        handleDeleteTag(tagId, tag.label);
+                                                    }}
+                                                    onKeyDown={(event) => {
+                                                        if (event.key === "Enter" || event.key === " ") {
+                                                            event.preventDefault();
+                                                            event.stopPropagation();
+                                                            handleDeleteTag(tagId, tag.label);
+                                                        }
+                                                    }}
                                                     title="删除物品"
                                                 >
                                                     <X className=" w-3 h-3" />
-                                                </button>
+                                                </span>
                                             )}
                                         </span>
                                     );

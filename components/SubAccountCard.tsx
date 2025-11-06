@@ -89,6 +89,19 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
     }, [refreshCharacters]);
 
     useEffect(() => {
+        if (typeof window === "undefined") {
+            return;
+        }
+        const handleAutoUpdate = () => {
+            void refreshCharacters();
+        };
+        window.addEventListener("gam:card-time-auto-updated", handleAutoUpdate);
+        return () => {
+            window.removeEventListener("gam:card-time-auto-updated", handleAutoUpdate);
+        };
+    }, [refreshCharacters]);
+
+    useEffect(() => {
         setEditForm({
             name: subAccount.name ?? "",
             note: subAccount.note ?? "",

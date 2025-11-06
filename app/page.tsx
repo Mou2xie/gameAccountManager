@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { SubAccountCard } from "@/components/SubAccountCard";
 import { MainAccountCard } from "@/components/MainAccountCard";
 import { subAccountService } from "@/services/subAccountService";
+import { initCardTimeScheduler } from "@/services/cardTimeScheduler";
 import { Modal } from "@/components/Modal";
 import type { ISubAccount, IMainAccount } from "@/libs/db";
 
@@ -31,6 +32,10 @@ export default function Home() {
     return () => {
       document.body.classList.remove("home-background");
     };
+  }, []);
+
+  useEffect(() => {
+    initCardTimeScheduler();
   }, []);
 
   const loadSubAccounts = useCallback(async (mainAccountId: number) => {
@@ -75,7 +80,7 @@ export default function Home() {
         (currentMainAccount && subAccounts.length < 10) && (
           <div className=" flex justify-center">
             <button
-              className="app-btn-primary w-full rounded-xl max-w-xl"
+              className="app-btn-primary w-full rounded-xl max-w-xl border-1 border-[#C5DFE0] shadow cursor-pointer"
               onClick={() => setCreateSubAccountModalFlag(true)}
             >
               新建子账号
