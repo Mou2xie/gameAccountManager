@@ -65,6 +65,13 @@ export default function Home() {
   return (
     <div className=" space-y-6">
       <MainAccountCard currentMainAccount={currentMainAccount} onSelectMainAccount={handleMainAccountChange} />
+      {
+        !currentMainAccount && (
+          <div className="rounded-xl border border-dashed border-[#C5DFE0] bg-[#f5fbfb] p-4 text-sm text-[var(--color-text-muted)]">
+            账号数据保存在浏览器本地，不会上传到线上，请放心使用。
+          </div>
+        )
+      }
       <div className=" space-y-6">
         {
           subAccounts.length > 0 && subAccounts.map((subAccount) => (
