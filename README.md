@@ -20,6 +20,16 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Progressive Web App
+
+The app now ships as a PWA:
+
+- `public/manifest.json` exposes install metadata together with 192px/512px icons.
+- `public/service-worker.js` precaches the shell plus an `offline.html` fallback so previously loaded pages stay usable without a network connection.
+- The service worker is registered through `components/ServiceWorkerRegister` (loaded from `app/layout.tsx`). Registration happens automatically in production/HTTPS builds; development keeps it disabled to avoid caching surprises.
+
+To verify the PWA locally run `npm run build && npm run start`, open the site over `https://` (or `http://localhost`), then use Chrome’s Lighthouse panel or the “Install app” prompt to confirm installability.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
