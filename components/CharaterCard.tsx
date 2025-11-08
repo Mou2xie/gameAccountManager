@@ -372,7 +372,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                     <div className=" relative ml-3 group">
                         <HelpCircle
-                            className=" w-4 h-4 text-(--color-primary) cursor-pointer"
+                            className=" w-6 h-6 text-(--color-primary) cursor-pointer"
                             aria-label="卡时说明"
                         />
                         <span className=" pointer-events-none absolute left-1/2 bottom-full z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[10px] font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">

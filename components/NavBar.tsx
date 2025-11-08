@@ -14,7 +14,7 @@ export const NavBar = () => {
             </div>
             <div></div>
             <div className=" flex items-center justify-end gap-5 text-[var(--color-text-muted)] text-sm">
-                反馈请加Q群：231443506
+                萌新Q群：231443506
             </div>
         </nav>
     );
