@@ -65,10 +65,10 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
     }
 
     return (
-        <div className=" app-card flex flex-wrap items-center justify-between gap-6">
-            <div className=" flex items-center gap-3">
+        <div className=" app-card flex flex-col gap-6 md:flex-row md:flex-wrap md:items-center md:justify-between">
+            <div className=" flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto md:flex-1 md:flex-row">
                 <p className=" text-sm font-medium text-[var(--color-text-muted)]">当前主账号</p>
-                <div className=" relative min-w-[220px]">
+                <div className=" relative w-full sm:min-w-[220px] sm:w-auto">
                     <select
                         className=" app-select w-full pr-10"
                         value={currentMainAccount?.id || ""}
@@ -87,7 +87,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                     </span>
                 </div>
             </div>
-            <div className=" flex items-center gap-4">
+            <div className=" flex w-full flex-wrap items-center gap-4 sm:justify-end md:w-auto md:flex-none">
                 {
                     currentMainAccount && (
                         <>
@@ -101,7 +101,7 @@ export const MainAccountCard = ({ currentMainAccount, onSelectMainAccount }: Mai
                         </>
                     )
                 }
-                <button className=" app-btn-primary cursor-pointer" onClick={() => setCreateMainAccountModalFlag(true)}>新建主账号</button>
+                <button className=" app-btn-primary w-full cursor-pointer sm:w-auto" onClick={() => setCreateMainAccountModalFlag(true)}>新建主账号</button>
             </div>
 
             {/* create main account modal */}

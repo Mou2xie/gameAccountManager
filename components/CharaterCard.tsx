@@ -329,15 +329,15 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
     };
 
     return (
-        <div className=" app-panel p-5 space-y-3 flex flex-col">
-            <div className=" grid grid-cols-3 border-b border-[var(--color-border-strong)] pb-3">
-                <div className=" space-y-1">
-                    <p className=" text-xl text-gray-700">{name}</p>
+        <div className=" app-panel flex flex-col space-y-3 p-4 sm:p-5">
+            <div className=" grid grid-cols-1 gap-4 border-b border-[var(--color-border-strong)] pb-3 md:grid-cols-3 md:items-center">
+                <div className=" space-y-1 text-center md:text-left">
+                    <p className=" text-xl text-gray-700 break-words">{name}</p>
                     <p className=" text-sm text-[var(--color-accent)]">
                         职业：{characterClass || "未设置"}
                     </p>
                 </div>
-                <div className=" flex items-center text-[var(--color-accent)] justify-center">
+                <div className=" flex items-center justify-between text-[var(--color-accent)] md:justify-center">
                     <button
                         className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustLevel(-1)}
@@ -354,7 +354,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         <Plus className=" w-4 h-4" />
                     </button>
                 </div>
-                <div className=" flex items-center justify-end text-[var(--color-accent)]">
+                <div className=" flex flex-wrap items-center justify-between gap-2 text-[var(--color-accent)] md:justify-end">
                     <button
                         className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(-1)}
@@ -370,7 +370,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     >
                         <Plus className=" w-4 h-4" />
                     </button>
-                    <div className=" relative ml-3 group">
+                    <div className=" relative ml-3 group mt-2 md:mt-0">
                         <HelpCircle
                             className=" w-6 h-6 text-(--color-primary) cursor-pointer"
                             aria-label="卡时说明"
@@ -381,7 +381,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </div>
                 </div>
             </div>
-            <div className=" space-y-3 grow">
+            <div className=" grow space-y-3">
                 <p className=" text-sm text-[var(--color-accent)]">物品</p>
                 <div className=" flex flex-wrap gap-2 items-center">
                     {assignedTags.map(tag => (
@@ -411,7 +411,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                 </div>
             </div>
-            <div className=" flex justify-end gap-4 ">
+            <div className=" flex flex-wrap justify-end gap-4 ">
                 <button
                     className=" text-[var(--color-primary)] hover:text-[var(--color-accent)] transition cursor-pointer"
                     onClick={handleOpenEditModal}

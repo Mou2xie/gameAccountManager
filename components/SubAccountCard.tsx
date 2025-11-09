@@ -267,10 +267,10 @@ export const SubAccountCard = ({ subAccount, onSubAccountMutate }: SubAccountCar
     };
 
     return (
-        <div className=" app-panel p-6 space-y-6 bg-[var(--color-surface-card)] border-2 border-[var(--color-border-soft)]">
-            <div className=" flex flex-wrap items-center gap-3 justify-between">
-                <p className=" text-xl font-semibold text-[var(--color-text)]">{subAccount?.name}</p>
-                <div className=" flex gap-3">
+        <div className=" app-panel space-y-6 border-2 border-[var(--color-border-soft)] bg-[var(--color-surface-card)] p-4 sm:p-6">
+            <div className=" flex flex-col gap-4 md:flex-row md:flex-wrap md:items-center md:justify-between">
+                <p className=" text-xl font-semibold text-[var(--color-text)] break-words">{subAccount?.name}</p>
+                <div className=" flex flex-wrap gap-3 sm:gap-4 md:justify-end">
                     <button
                         className=" icon-button"
                         onClick={() => setIsEditModalOpen(true)}

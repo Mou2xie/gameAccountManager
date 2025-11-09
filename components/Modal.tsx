@@ -10,7 +10,7 @@ export const Modal = ({ isShow, setModalShow, children }: { isShow: boolean; set
                             className=" absolute inset-0"
                             onClick={() => setModalShow(false)}
                         />
-                        <div className=" relative min-w-[320px] max-w-lg w-full bg-white rounded-2xl shadow-xl border border-slate-100">
+                        <div className=" relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-slate-100 bg-white shadow-xl">
                             <div className=" pt-3 pr-3 flex justify-end cursor-pointer" onClick={() => setModalShow(false)}>
                                 <CircleX size={25} className=" text-gray-400" />
                             </div>
