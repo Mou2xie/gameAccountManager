@@ -1,10 +1,5 @@
 
 
-type TabItem = {
-    label: string;
-    href: string;
-};
-
 export const NavBar = () => {
     return (
         <nav className=" bg-[var(--color-surface-card)] border-b border-[var(--color-border-strong)] shadow-md shadow-[rgba(57,51,43,0.08)]">
