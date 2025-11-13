@@ -22,6 +22,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className={notoSans.variable}>
+      <head>
+        {/* Google Analytics */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-PRMFFVBJXD"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-PRMFFVBJXD');
+            `,
+          }}
+        />
+      </head>
       <body className=" min-h-screen">
         <NavBar />
         <Main>{children}</Main>
