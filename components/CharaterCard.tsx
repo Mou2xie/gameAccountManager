@@ -330,14 +330,14 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
 
     return (
         <div className=" app-panel flex flex-col space-y-3 p-4 sm:p-5">
-            <div className=" grid grid-cols-1 gap-4 border-b border-[var(--color-border-strong)] pb-3 md:grid-cols-3 md:items-center">
-                <div className=" space-y-1 text-center md:text-left">
+            <div className=" grid grid-cols-1 border-b border-[var(--color-border-strong)] pb-3 md:grid-cols-5 md:items-center">
+                <div className=" space-y-1 text-center md:text-left md:col-span-1">
                     <p className=" text-xl text-gray-700 break-words">{name}</p>
                     <p className=" text-sm text-[var(--color-accent)]">
                         职业：{characterClass || "未设置"}
                     </p>
                 </div>
-                <div className=" flex items-center justify-between text-[var(--color-accent)] md:justify-center">
+                <div className=" flex items-center justify-between text-[var(--color-accent)] md:justify-center md:col-span-2">
                     <button
                         className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustLevel(-1)}
@@ -354,7 +354,7 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                         <Plus className=" w-4 h-4" />
                     </button>
                 </div>
-                <div className=" flex flex-wrap items-center justify-between gap-2 text-[var(--color-accent)] md:justify-end">
+                <div className=" flex flex-wrap items-center  text-[var(--color-accent)] md:justify-end  md:col-span-2">
                     <button
                         className=" p-1 border rounded-full border-[var(--color-accent)] cursor-pointer disabled:opacity-50"
                         onClick={() => handleAdjustCardTime(-1)}
@@ -372,10 +372,10 @@ export const CharaterCard = ({ character, onCharacterMutate }: CharacterCardProp
                     </button>
                     <div className=" relative ml-3 group mt-2 md:mt-0">
                         <HelpCircle
-                            className=" w-6 h-6 text-(--color-primary) cursor-pointer"
+                            className=" w-5 h-5 text-(--color-primary) cursor-pointer"
                             aria-label="卡时说明"
                         />
-                        <span className=" pointer-events-none absolute left-1/2 bottom-full z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[10px] font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">
+                        <span className=" pointer-events-none absolute left-1/2 bottom-full z-10 mb-2 -translate-x-1/2 translate-y-1 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[12px] font-medium text-white opacity-0 transition group-hover:translate-y-0 group-hover:opacity-100">
                             卡时每天6点自动+1
                         </span>
                     </div>
