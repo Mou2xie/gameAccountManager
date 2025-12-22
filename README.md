@@ -110,4 +110,4 @@ Adopting Tailwind v4 (alpha/beta) allows for a zero-runtime CSS footprint and na
 This project is licensed under the MIT License.
 
 ---
-*Created by [Your Name]*
+*Created by Yong Xie*
